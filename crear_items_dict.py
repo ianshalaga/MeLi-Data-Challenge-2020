@@ -1,4 +1,15 @@
+import re
+import unicodedata
 import pickle
+
+
+def noacentos(s):
+    s = re.sub(
+        r"([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+", r"\1", 
+        unicodedata.normalize("NFD", s), 0, re.I
+    )
+    s = unicodedata.normalize("NFC", s)
+    return s
 
 
 def items_data_to_dict(items_data_ruta):
@@ -19,7 +30,7 @@ def items_data_to_dict(items_data_ruta):
                     cadena = cadena + " " + elemento.split(": ")[1][1:-1]
                 if "condition" in elemento:
                     cadena = cadena + " " + elemento.split(": ")[1][1:-1]
-            items_dict[clave] = cadena.lower()
+            items_dict[clave] = noacentos(cadena).lower()
     return items_dict
 
 
